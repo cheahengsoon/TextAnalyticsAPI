@@ -1,0 +1,76 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewModels="clr-namespace:TextAnalyticsAPI.ViewModels;assembly=TextAnalyticsAPI"
+             xmlns:custom="clr-namespace:TextAnalyticsAPI.Custom;assembly=TextAnalyticsAPI"
+             xmlns:behaviors="clr-namespace:Corcav.Behaviors;assembly=Corcav.Behaviors"
+             x:Class="TextAnalyticsAPI.Views.MainPage"
+             x:Name="MainContentPage"
+             Title="TextAnalytics">
+
+    <ContentPage.BindingContext>
+        <viewModels:MainPageViewModel />
+    </ContentPage.BindingContext>
+
+    <ContentPage.Content>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <ContentView Grid.Row="0"
+                         BackgroundColor="#2196F3">
+                <Label Text="Choose a selection"
+                       TextColor="White"
+                       FontSize="20"
+                       HorizontalOptions="Center"
+                       HorizontalTextAlignment="Center"
+                       Margin="0,10" />
+            </ContentView>
+            <ContentView Grid.Row="1">
+                <custom:CustomEditor x:Name="TextEditor"
+                                     Placeholder="Write something.."
+                                     BackgroundColor="White"
+                                     MinimumHeightRequest="300">
+                    <behaviors:Interaction.Behaviors>
+                        <behaviors:BehaviorCollection>
+                            <behaviors:EventToCommand EventName="Unfocused"
+                                                      Command="{Binding Path=BindingContext.TextEditorCompletedCommand,
+                                                      Source={x:Reference MainContentPage}}"
+                                                      CommandParameter="{Binding Source={x:Reference TextEditor},
+                                                      Path=Text}" />
+                        </behaviors:BehaviorCollection>
+                    </behaviors:Interaction.Behaviors>
+                </custom:CustomEditor>
+            </ContentView>
+            <ContentView Grid.Row="2"
+                         VerticalOptions="CenterAndExpand">
+                <ListView HasUnevenRows="True"
+                          ItemsSource="{Binding List}"
+                          SeparatorVisibility="None"
+                          custom:ListViewItemSelected.Command="{Binding Path=BindingContext.ItemSelectedCommand,
+                          Source={x:Reference MainContentPage}}">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <ViewCell>
+                                <Grid Padding="50,10">
+                                    <Frame BackgroundColor="#2196F3"
+                                           HasShadow="False">
+                                        <Label Text="{Binding Title}"
+                                               TextColor="White"
+                                               FontSize="20"
+                                               HorizontalOptions="Center"
+                                               HorizontalTextAlignment="Center" />
+                                    </Frame>
+                                </Grid>
+                            </ViewCell>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </ContentView>
+        </Grid>
+    </ContentPage.Content>
+</ContentPage>
